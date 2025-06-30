@@ -1,0 +1,27 @@
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual environments
+venv/
+.env
+
+# Local storage
+Uploads/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.cache
+*.swp
+*.swo
