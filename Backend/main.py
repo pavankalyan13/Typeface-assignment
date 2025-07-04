@@ -7,8 +7,18 @@ from database import MongoDBClient
 from datetime import datetime
 from config import STORAGE_BACKEND
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Initialize clients
 storage_client = get_storage_client(STORAGE_BACKEND)
