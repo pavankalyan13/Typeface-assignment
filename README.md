@@ -1,10 +1,10 @@
 # Dropbox Clone
 
-A file storage application with a FastAPI backend using MongoDB for metadata and MinIO for file storage, paired with a React/TypeScript/Tailwind CSS frontend. Supports uploading, listing, viewing, downloading, deleting, and renaming files (`.txt`, `.jpg`, `.png`, `.json`).
+A file storage application with a FastAPI backend using MongoDB for metadata and MinIO for file storage, paired with a React/TypeScript/Tailwind CSS frontend. Supports uploading, listing, viewing, downloading files (`.txt`, `.jpg`, `.png`, `.json`).
 
 ## Software Requirements
-- Docker
-- docker-compose
+- Docker/Podman
+- docker-compose/Podman-compose
 - Python 3.8+
 - Node.js 16+
 
@@ -27,5 +27,4 @@ Refer to `Frontend/README.md` for detailed instructions, including installing de
 ### 3. Verify
 - Ensure the backend is running at `http://localhost:5001`.
 - Open `http://localhost:3000` in your browser to access the frontend.
-- Test uploading files, viewing the file list, opening the modal, deleting, renaming, and downloading files.
 
