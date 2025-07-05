@@ -15,3 +15,9 @@ MINIO_SECURE = os.getenv("MINIO_SECURE", "False").lower() == "true"
 
 # Local storage directory
 LOCAL_STORAGE_PATH = "./Uploads"
+
+# Logging level
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
+# Supported file extensions
+ALLOWED_EXTENSIONS = {".txt", ".jpg", ".png", ".json"}
