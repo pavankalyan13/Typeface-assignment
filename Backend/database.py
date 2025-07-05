@@ -2,8 +2,9 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
 from bson import ObjectId
 from typing import Dict, List
-import os
 import logging
+from config import CONFIG
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 logger = logging.getLogger(__name__)
 
@@ -11,17 +12,17 @@ class MongoDBClient:
     """MongoDB client for managing file metadata."""
 
     def __init__(self):
-        """Initialize MongoDB connection using environment variables."""
+        """Initialize MongoDB connection using configuration."""
         try:
-            mongodb_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
-            self.client = MongoClient(mongodb_uri)
-            self.db = self.client[os.getenv("MONGODB_DATABASE", "mydb")]
+            self.client = MongoClient(CONFIG.MONGODB_URI)
+            self.db = self.client[CONFIG.MONGODB_DATABASE]
             self.collection = self.db["files"]
             logger.info("MongoDB client initialized")
         except ConnectionFailure as e:
             logger.error(f"MongoDB connection failed: {str(e)}")
-            raise
+            raise ValueError(f"MongoDB connection failed: {str(e)}")
 
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(1), reraise=True)
     def insert_file(self, file_metadata: Dict) -> str:
         """Insert file metadata and return its ID."""
         try:
@@ -32,6 +33,7 @@ class MongoDBClient:
             logger.error(f"Failed to insert file metadata: {str(e)}")
             raise ValueError(f"Database insert failed: {str(e)}")
 
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(1), reraise=True)
     def get_files(self) -> List[Dict]:
         """Retrieve metadata for all files."""
         try:
@@ -42,6 +44,7 @@ class MongoDBClient:
             logger.error(f"Failed to retrieve files: {str(e)}")
             raise ValueError(f"Database query failed: {str(e)}")
 
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(1), reraise=True)
     def get_file_by_id(self, file_id: str) -> Dict:
         """Retrieve file metadata by ID."""
         try:
@@ -49,9 +52,6 @@ class MongoDBClient:
             if not file:
                 logger.warning(f"File not found: {file_id}")
             return file
-        except ValueError:
-            logger.warning(f"Invalid file ID format: {file_id}")
-            return None
         except OperationFailure as e:
             logger.error(f"Failed to retrieve file {file_id}: {str(e)}")
             raise ValueError(f"Database query failed: {str(e)}")
@@ -61,7 +61,7 @@ class MongoDBClient:
         try:
             self.db.command("ping")
             logger.debug("MongoDB health check passed")
-            return {"status": "healthy"}
+            return {"status": CONFIG.HEALTHY}
         except ConnectionFailure as e:
             logger.error(f"MongoDB health check failed: {str(e)}")
-            return {"status": "unhealthy", "error": str(e)}
+            return {"status": CONFIG.UNHEALTHY, "error": str(e)}

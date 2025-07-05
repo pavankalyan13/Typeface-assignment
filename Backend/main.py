@@ -3,21 +3,21 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from routers.files import router as files_router
 import logging
-from config import LOG_LEVEL
+from config import CONFIG
 
 # Configure logging
 logging.basicConfig(
-    level=getattr(logging, LOG_LEVEL),
+    level=getattr(logging, CONFIG.LOG_LEVEL),
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Dropbox Clone Backend")
 
-# Enable CORS for frontend
+# Enable CORS for frontend, configurable via environment variable
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[CONFIG.CORS_ORIGIN],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
